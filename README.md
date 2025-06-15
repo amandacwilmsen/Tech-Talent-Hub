@@ -4,6 +4,7 @@
 ## ℹ️ Sobre o Projeto
 Solução integrada para gestão estratégica de pessoas em TI, desenvolvida como trabalho final da disciplina de Psicologia e Gestão de Pessoas em TI. O projeto visa resolver o distanciamento entre RH e área técnica em empresas familiares não tecnológicas.
 
+![Uploading image.png…]()
 
 ## 📋 Problema Identificado
 - Contratações ineficazes devido à falta de conhecimento técnico do RH
