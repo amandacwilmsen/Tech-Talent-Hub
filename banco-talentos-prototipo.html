@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banco de Talentos Técnicos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            padding: 30px;
+        }
+        
+        .sidebar {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+        }
+        
+        .filters h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+        
+        .filter-group {
+            margin-bottom: 20px;
+        }
+        
+        .filter-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .filter-group select, .filter-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .filter-group select:focus, .filter-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            background: white;
+        }
+        
+        .search-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            align-items: center;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+        
+        .add-btn {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        
+        .add-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .candidates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .candidate-card {
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .candidate-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .candidate-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.5em;
+            margin-right: 15px;
+        }
+        
+        .candidate-info h4 {
+            color: #2c3e50;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+        
+        .candidate-role {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+        }
+        
+        .skill-tag {
+            background: #ecf0f1;
+            color: #2c3e50;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+        
+        .status.disponivel {
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+        
+        .status.processo {
+            background: #fff3cd;
+            color: #f39c12;
+        }
+        
+        .status.contratado {
+            background: #d1ecf1;
+            color: #3498db;
+        }
+        
+        .implementation-timeline {
+            background: #f8f9fa;
+            padding: 30px;
+            margin-top: 30px;
+            border-radius: 15px;
+        }
+        
+        .timeline-title {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 1.5em;
+            margin-bottom: 30px;
+        }
+        
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .timeline-step {
+            flex: 1;
+            text-align: center;
+            min-width: 200px;
+        }
+        
+        .step-number {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin: 0 auto 15px;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .step-description {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+        }
+        
+        .close {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #aaa;
+        }
+        
+        .close:hover {
+            color: #000;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .timeline {
+                flex-direction: column;
+            }
+            
+            .candidates-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Banco de Talentos Técnicos</h1>
+            <p>Solução integrada para gestão estratégica de pessoas em TI</p>
+        </div>
+        
+        <div class="dashboard">
+            <div class="sidebar">
+                <div class="filters">
+                    <h3>🔍 Filtros Inteligentes</h3>
+                    
+                    <div class="filter-group">
+                        <label>Área Técnica:</label>
+                        <select id="areaFilter">
+                            <option value="">Todas as áreas</option>
+                            <option value="desenvolvimento">Desenvolvimento</option>
+                            <option value="infraestrutura">Infraestrutura</option>
+                            <option value="dados">Análise de Dados</option>
+                            <option value="seguranca">Segurança</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>Status:</label>
+                        <select id="statusFilter">
+                            <option value="">Todos os status</option>
+                            <option value="disponivel">Disponível</option>
+                            <option value="processo">Em Processo</option>
+                            <option value="contratado">Contratado</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>Experiência:</label>
+                        <select id="experienciaFilter">
+                            <option value="">Todos os níveis</option>
+                            <option value="junior">Júnior</option>
+                            <option value="pleno">Pleno</option>
+                            <option value="senior">Sênior</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-card">
+                        <span class="stat-number">142</span>
+                        <span class="stat-label">Talentos</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">38</span>
+                        <span class="stat-label">Disponíveis</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">15</span>
+                        <span class="stat-label">Em Processo</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">7</span>
+                        <span class="stat-label">Dias Médios</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="main-content">
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="🔎 Buscar por nome, habilidades ou cargo...">
+                    <button class="add-btn" onclick="openModal()">+ Adicionar Talento</button>
+                </div>
+                
+                <div class="candidates-grid" id="candidatesGrid">
+                    <!-- Candidatos serão inseridos aqui pelo JavaScript -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="implementation-timeline">
+            <h3 class="timeline-title">🚀 Implementação em 7 Dias</h3>
+            <div class="timeline">
+                <div class="timeline-step">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Configuração Inicial</div>
+                    <div class="step-description">Setup do Notion/Excel com estrutura base</div>
+                </div>
+                <div class="timeline-step">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Coleta de Dados</div>
+                    <div class="step-description">Levantamento de perfis existentes</div>
+                </div>
+                <div class="timeline-step">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Categorização</div>
+                    <div class="step-description">Organização por competências e tags</div>
+                </div>
+                <div class="timeline-step">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Treinamento</div>
+                    <div class="step-description">Capacitação da equipe de RH</div>
+                </div>
+                <div class="timeline-step">
+                    <div class="step-number">5</div>
+                    <div class="step-title">Go Live</div>
+                    <div class="step-description">Sistema em produção</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para adicionar candidato -->
+    <div id="candidateModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>➕ Adicionar Novo Talento</h2>
+            <br>
+            <div class="filter-group">
+                <label>Nome Completo:</label>
+                <input type="text" placeholder="Digite o nome do candidato">
+            </div>
+            <div class="filter-group">
+                <label>Cargo Desejado:</label>
+                <input type="text" placeholder="Ex: Desenvolvedor Full Stack">
+            </div>
+            <div class="filter-group">
+                <label>Principais Habilidades:</label>
+                <input type="text" placeholder="Ex: React, Node.js, Python">
+            </div>
+            <div class="filter-group">
+                <label>Status:</label>
+                <select>
+                    <option value="disponivel">Disponível</option>
+                    <option value="processo">Em Processo</option>
+                    <option value="contratado">Contratado</option>
+                </select>
+            </div>
+            <button class="add-btn" style="width: 100%; margin-top: 20px;">Salvar Talento</button>
+        </div>
+    </div>
+
+    <script>
+        // Dados mockados dos candidatos
+        const candidates = [
+            {
+                name: "Ana Silva",
+                role: "Desenvolvedora Full Stack",
+                area: "desenvolvimento",
+                skills: ["React", "Node.js", "PostgreSQL"],
+                status: "disponivel",
+                experience: "pleno"
+            },
+            {
+                name: "Carlos Santos",
+                role: "Analista de Infraestrutura",
+                area: "infraestrutura",
+                skills: ["AWS", "Docker", "Kubernetes"],
+                status: "processo",
+                experience: "senior"
+            },
+            {
+                name: "Marina Costa",
+                role: "Cientista de Dados",
+                area: "dados",
+                skills: ["Python", "Machine Learning", "SQL"],
+                status: "disponivel",
+                experience: "pleno"
+            },
+            {
+                name: "Pedro Oliveira",
+                role: "Especialista em Segurança",
+                area: "seguranca",
+                skills: ["Ethical Hacking", "CISSP", "Firewall"],
+                status: "contratado",
+                experience: "senior"
+            },
+            {
+                name: "Julia Ferreira",
+                role: "Desenvolvedora Mobile",
+                area: "desenvolvimento",
+                skills: ["React Native", "Flutter", "iOS"],
+                status: "disponivel",
+                experience: "junior"
+            },
+            {
+                name: "Roberto Lima",
+                role: "DevOps Engineer",
+                area: "infraestrutura",
+                skills: ["Jenkins", "Terraform", "Monitoring"],
+                status: "processo",
+                experience: "senior"
+            }
+        ];
+
+        function renderCandidates(candidatesToRender = candidates) {
+            const grid = document.getElementById('candidatesGrid');
+            grid.innerHTML = '';
+            
+            candidatesToRender.forEach(candidate => {
+                const card = document.createElement('div');
+                card.className = 'candidate-card';
+                card.innerHTML = `
+                    <div class="candidate-header">
+                        <div class="avatar">${candidate.name.charAt(0)}</div>
+                        <div class="candidate-info">
+                            <h4>${candidate.name}</h4>
+                            <div class="candidate-role">${candidate.role}</div>
+                        </div>
+                    </div>
+                    <div class="skills">
+                        ${candidate.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                    </div>
+                    <div class="status ${candidate.status}">
+                        ${candidate.status === 'disponivel' ? '✅ Disponível' : 
+                          candidate.status === 'processo' ? '⏳ Em Processo' : '👤 Contratado'}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterCandidates() {
+            const areaFilter = document.getElementById('areaFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const experienciaFilter = document.getElementById('experienciaFilter').value;
+            
+            let filtered = candidates.filter(candidate => {
+                return (!areaFilter || candidate.area === areaFilter) &&
+                       (!statusFilter || candidate.status === statusFilter) &&
+                       (!experienciaFilter || candidate.experience === experienciaFilter);
+            });
+            
+            renderCandidates(filtered);
+        }
+
+        function openModal() {
+            document.getElementById('candidateModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('candidateModal').style.display = 'none';
+        }
+
+        // Event listeners
+        document.getElementById('areaFilter').addEventListener('change', filterCandidates);
+        document.getElementById('statusFilter').addEventListener('change', filterCandidates);
+        document.getElementById('experienciaFilter').addEventListener('change', filterCandidates);
+
+        // Fechar modal quando clicar fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('candidateModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Inicializar
+        renderCandidates();
+    </script>
+</body>
+</html>
